@@ -9,9 +9,6 @@ import Shaders from 'kgengine/shaders';
 import Lighting from 'kgengine/lighting';
 import { Snippets } from 'kgengine/objects';
 
-interface Mapping {
-  map: any;
-}
 @Injectable({ providedIn: 'root' })
 export class RenderService {
   // Сцены и рендеры
@@ -19,6 +16,12 @@ export class RenderService {
   private renderCSS = Engine.CSS3DEngine();
   private sceneGL = new OtherScripts.CreateScene();
   private sceneCSS = new OtherScripts.CreateScene();
+
+  private camera: THREE.PerspectiveCamera = Cameras.DefaultCameraSettings({
+    x: 0,
+    y: 0,
+    z: 14,
+  });
 
   // Освещение
   private shadow = Lighting.ShadowCfg(this.sceneGL.scene);
@@ -35,35 +38,34 @@ export class RenderService {
     }
   );
 
-  private camera: THREE.PerspectiveCamera = Cameras.DefaultCameraSettings({
-    x: 0,
-    y: 0,
-    z: 5,
-  });
-
+  // HTML обьекты
   private css3Object = Snippets.CreateCSS3(
     this.sceneGL.scene,
     this.sceneCSS.scene,
     { x: 0, y: 0, z: 0 },
     {
-      height: 50,
-      width: 50,
+      height: 1000,
+      width: 1565,
     }
   );
   private cameraHelper = Shaders.CamerasCuttingHelper(
     this.css3Object,
     this.camera,
-    this.sceneGL.scene
+    this.sceneGL.scene,
+    false
   );
+
+  // Модели
   private modelLaptop = new OtherScripts.CreateModel(
     '/default.glb',
     {
       posX: 0,
-      posY: 0,
-      posZ: 0,
-      scaleHeight: 0.2,
-      scaleLength: 0.2,
-      scaleWidth: 0.2,
+      posY: 2,
+      posZ: 21,
+      scaleHeight: 1.3,
+      scaleLength: 1.3,
+      scaleWidth: 1.3,
+      rotateX: 25,
     },
     {}
   );
@@ -73,39 +75,50 @@ export class RenderService {
   constructor(private ngZone: NgZone) {}
 
   // Бизнес логика всего проекта
-  init(container: HTMLElement): void {
+  init(container: HTMLElement, site: HTMLElement): void {
     // Констант настройки
     this.sceneGL.scene.background = null; // Очистка фона у WebGL - Object3D
     this.renderGL.localClippingEnabled = true;
+
     this.renderGL.setClearColor(0x000000, 0); // Очистка фона у WebGL - Object3D
     this.renderCSS.domElement.style.backgroundColor = 'gray'; // Делаем фон для сцены любого цвета поддерживаемого CSS
     this.renderCSS.domElement.appendChild(this.renderGL.domElement); // Накладываем 3Д обьекты на HTML для перерисовки
     container.appendChild(this.renderCSS.domElement); // Добавляем рендер на сайт
 
+   //this.renderGL.domElement.style.pointerEvents = 'none';
+   //this.renderGL.domElement.style.touchAction = 'none';
+
     this.sceneGL.addScene([this.shadow, this.drctLight]); // Работа с светом
 
-    //model
+    this.sceneGL.scene.remove(this.sceneGL.scene.children[2]);
 
-    this.modelLaptop.setNodeParam((node) => {
-      const originalMaterial = node.material as Mapping;
+    //console.log(this.sceneCSS.scene.children[0]);
+    //container.appendChild(this.css3Object.HTMLElement.element);
 
-      console.log(node.material);
-      let ShaderMaterial = Shaders.CuttingCustomBox({
-        CoordLB: this.cameraHelper.Coords.CoordLB,
-        CoordLT: this.cameraHelper.Coords.CoordLT,
-        CoordRB: this.cameraHelper.Coords.CoordRB,
-        CoordRT: this.cameraHelper.Coords.CoordRT,
-        depth: this.cameraHelper.Coords.depth,
-        startZ: this.cameraHelper.Coords.startZ,
-        endZ: this.cameraHelper.Coords.endZ,
-        positionWorld: this.cameraHelper.Coords.positionWorld,
-        texture: originalMaterial.map,
-        matrix: node.matrixWorld,
-      });
-
-      node.material = ShaderMaterial;
+    this.css3Object.HTMLElement.element.append(site);
+    this.css3Object.HTMLElement.element.addEventListener('click', () => {
+      console.log('CLICK');
     });
+    this.renderCSS.domElement.addEventListener('click', (event) => {
+      let test = Action.TrackingClickItems(
+        this.sceneGL.scene,
+        this.camera,
+        event
+      );
+      console.log(test[0]);
+      console.log(123);
+    });
+    // this.css3Object.HTMLElement.element.style.removeProperty;
+    // this.css3Object.HTMLElement.element.style.backgroundColor = '';
+    // this.css3Object.HTMLElement.element.classList.add('site');
+    //ads
 
+    this.startAnimation();
+    this.rerenderModels();
+  }
+
+  private rerenderModels() {
+    this.modelLaptop.shaderCreate(this.cameraHelper);
     this.modelLaptop.addToScene(this.sceneGL.scene);
 
     this.modelLaptop.customEdit((model) => {
@@ -113,9 +126,18 @@ export class RenderService {
       this.drctLight.lookAt(model.position);
     });
 
-    //ads
+    setInterval(() => {
+      this.cameraHelper = Shaders.UpdateCamCutHelper(
+        this.cameraHelper.object,
+        this.css3Object,
+        this.camera,
+        this.sceneGL.scene,
+        false,
+        50
+      );
 
-    this.startAnimation();
+      this.modelLaptop.shaderUpdate(this.cameraHelper.Coords);
+    }, 1);
   }
 
   // Анимация перевызова дефолтного THREE
@@ -123,16 +145,6 @@ export class RenderService {
     this.ngZone.runOutsideAngular(() => {
       const animate = () => {
         requestAnimationFrame(animate);
-        this.cameraHelper = Shaders.UpdateCamCutHelper(
-          this.cameraHelper.object,
-          this.css3Object,
-          this.camera,
-          this.sceneGL.scene,
-          true,
-          50
-        );
-
-        this.modelLaptop.shaderUpdate(this.cameraHelper.Coords);
 
         this.renderCSS.render(this.sceneCSS.scene, this.camera);
         this.renderGL.render(this.sceneGL.scene, this.camera);
