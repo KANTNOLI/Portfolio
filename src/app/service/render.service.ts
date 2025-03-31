@@ -29,10 +29,10 @@ export class RenderService {
     this.sceneGL.scene,
     {
       x: 2,
-      y: 2,
-      z: 0,
+      y: 1,
+      z: 100,
     },
-    { intensity: 2 }
+    { intensity: 1 }
   );
 
   // Обьекты сцены и Модельки
@@ -156,6 +156,9 @@ export class RenderService {
       node.userData = {
         TMF: true,
       };
+
+      node.castShadow = true;
+      node.receiveShadow = true;
     });
 
     // Рендеринг шейдеров со своей скоростью
