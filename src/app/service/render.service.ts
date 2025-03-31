@@ -17,13 +17,13 @@ export class RenderService {
   private sceneGL = new OtherScripts.CreateScene();
   private sceneCSS = new OtherScripts.CreateScene();
 
+  // Освещение и Камера (С действиями юзера)
   private camera: THREE.PerspectiveCamera = Cameras.DefaultCameraSettings({
     x: 0,
     y: 0,
     z: 14,
   });
-
-  // Освещение
+  private control = Action.OrbitControl(this.renderGL, this.camera);
   private shadow = Lighting.ShadowCfg(this.sceneGL.scene);
   private drctLight = Lighting.DirectionalLightCfg(
     this.sceneGL.scene,
@@ -38,7 +38,7 @@ export class RenderService {
     }
   );
 
-  // HTML обьекты
+  // Обьекты сцены и Модельки
   private css3Object = Snippets.CreateCSS3(
     this.sceneGL.scene,
     this.sceneCSS.scene,
@@ -54,8 +54,6 @@ export class RenderService {
     this.sceneGL.scene,
     false
   );
-
-  // Модели
   private modelLaptop = new OtherScripts.CreateModel(
     '/default.glb',
     {
@@ -70,7 +68,6 @@ export class RenderService {
     {}
   );
 
-  private control = Action.OrbitControl(this.renderGL, this.camera);
 
   constructor(private ngZone: NgZone) {}
 
@@ -85,17 +82,19 @@ export class RenderService {
     this.renderCSS.domElement.appendChild(this.renderGL.domElement); // Накладываем 3Д обьекты на HTML для перерисовки
     container.appendChild(this.renderCSS.domElement); // Добавляем рендер на сайт
 
-   //this.renderGL.domElement.style.pointerEvents = 'none';
-   //this.renderGL.domElement.style.touchAction = 'none';
+    // переключение правления HTML и 3D
+    //this.renderGL.domElement.style.pointerEvents = 'none';
+    //this.renderGL.domElement.style.touchAction = 'none';
 
     this.sceneGL.addScene([this.shadow, this.drctLight]); // Работа с светом
 
     this.sceneGL.scene.remove(this.sceneGL.scene.children[2]);
 
-    //console.log(this.sceneCSS.scene.children[0]);
-    //container.appendChild(this.css3Object.HTMLElement.element);
+    // Подставляем свой обьект HTML с стилями
+    site.style.width = this.css3Object.HTMLElement.element.style.width;
+    site.style.height = this.css3Object.HTMLElement.element.style.height;
+    this.css3Object.HTMLElement.element = site;
 
-    this.css3Object.HTMLElement.element.append(site);
     this.css3Object.HTMLElement.element.addEventListener('click', () => {
       console.log('CLICK');
     });
@@ -118,14 +117,17 @@ export class RenderService {
   }
 
   private rerenderModels() {
+    // Добавляем шейдеры
     this.modelLaptop.shaderCreate(this.cameraHelper);
     this.modelLaptop.addToScene(this.sceneGL.scene);
 
+    // После загрузки модельки делаем что хотим
     this.modelLaptop.customEdit((model) => {
-      console.log(model);
+      //console.log(model);
       this.drctLight.lookAt(model.position);
     });
 
+    // Рендеринг шейдеров со своей скоростью
     setInterval(() => {
       this.cameraHelper = Shaders.UpdateCamCutHelper(
         this.cameraHelper.object,
@@ -144,6 +146,7 @@ export class RenderService {
   private startAnimation(): void {
     this.ngZone.runOutsideAngular(() => {
       const animate = () => {
+        //Обычная анимайия как в threejs
         requestAnimationFrame(animate);
 
         this.renderCSS.render(this.sceneCSS.scene, this.camera);

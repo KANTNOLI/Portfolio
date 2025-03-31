@@ -5,3 +5,9 @@
   width: 100%;
   height: 100vh;
 }
+
+.site{
+  height: 50px;
+  width: 50px;
+  background-color: green;
+}
