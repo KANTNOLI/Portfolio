@@ -1,4 +1,4 @@
-.scene{
+.scene {
   border: 0;
   padding: 0;
   margin: 0;
@@ -6,8 +6,20 @@
   height: 100vh;
 }
 
-.site{
-  height: 50px;
+.site {
+  overflow-x: hidden;
+  display: flex;
+  flex-wrap: wrap;
+
+  position: absolute;
+  height: 100%;
   width: 50px;
   background-color: green;
+}
+
+.test {
+  width: 50px;
+  height: 50px;
+  background-color: red;
+  margin: 10px;
 }

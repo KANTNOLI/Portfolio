@@ -12,6 +12,10 @@ export class ScreenComponent implements AfterViewInit {
     const screen = this.elementRef.nativeElement.querySelector('.screen');
     const site = this.elementRef.nativeElement.querySelector('.site');
 
+    site.addEventListener('click', () => {
+      console.log('CLICK 2');
+    });
+
     this.render.init(screen, site);
   }
 }

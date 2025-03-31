@@ -32,10 +32,7 @@ export class RenderService {
       y: 2,
       z: 0,
     },
-    { intensity: 2 },
-    {
-      bias: -0.0005,
-    }
+    { intensity: 2 }
   );
 
   // Обьекты сцены и Модельки
@@ -68,63 +65,103 @@ export class RenderService {
     {}
   );
 
+  // Доп переменные для отслеживания состояния сцены
+  private toggleModeFlag: boolean = false;
 
   constructor(private ngZone: NgZone) {}
 
-  // Бизнес логика всего проекта
+  // Сборка проекта
   init(container: HTMLElement, site: HTMLElement): void {
-    // Констант настройки
-    this.sceneGL.scene.background = null; // Очистка фона у WebGL - Object3D
-    this.renderGL.localClippingEnabled = true;
-
-    this.renderGL.setClearColor(0x000000, 0); // Очистка фона у WebGL - Object3D
-    this.renderCSS.domElement.style.backgroundColor = 'gray'; // Делаем фон для сцены любого цвета поддерживаемого CSS
-    this.renderCSS.domElement.appendChild(this.renderGL.domElement); // Накладываем 3Д обьекты на HTML для перерисовки
-    container.appendChild(this.renderCSS.domElement); // Добавляем рендер на сайт
-
-    // переключение правления HTML и 3D
-    //this.renderGL.domElement.style.pointerEvents = 'none';
-    //this.renderGL.domElement.style.touchAction = 'none';
-
-    this.sceneGL.addScene([this.shadow, this.drctLight]); // Работа с светом
-
-    this.sceneGL.scene.remove(this.sceneGL.scene.children[2]);
+    this.initScene(container);
 
     // Подставляем свой обьект HTML с стилями
     site.style.width = this.css3Object.HTMLElement.element.style.width;
     site.style.height = this.css3Object.HTMLElement.element.style.height;
-    this.css3Object.HTMLElement.element = site;
 
-    this.css3Object.HTMLElement.element.addEventListener('click', () => {
-      console.log('CLICK');
+    //this.css3Object.HTMLElement.element = site;
+    this.css3Object.HTMLElement.element.innerHTML = '';
+    this.css3Object.HTMLElement.element.appendChild(site);
+
+    window.addEventListener('keyup', (event) => {
+      this.toggleMode(event);
     });
+
     this.renderCSS.domElement.addEventListener('click', (event) => {
-      let test = Action.TrackingClickItems(
+      let click = Action.TrackingClickItems(
         this.sceneGL.scene,
         this.camera,
         event
       );
-      console.log(test[0]);
-      console.log(123);
+
+      click.map((click) => {
+        console.log(click.object.userData);
+      });
+
+      // this.toggleMode(click, event);
     });
-    // this.css3Object.HTMLElement.element.style.removeProperty;
-    // this.css3Object.HTMLElement.element.style.backgroundColor = '';
-    // this.css3Object.HTMLElement.element.classList.add('site');
-    //ads
+
+    //   console.log(test);
+    //   console.log(123);
+    // });
 
     this.startAnimation();
     this.rerenderModels();
   }
 
+  private toggleMode(event: KeyboardEvent) {
+    console.log(event.key);
+    // переключение правления HTML и 3D
+    switch (event.key.toLowerCase()) {
+      case 'q':
+        this.renderGL.domElement.style.pointerEvents = 'auto';
+        this.renderGL.domElement.style.touchAction = 'auto';
+        break;
+      case 'e':
+        this.renderGL.domElement.style.pointerEvents = 'none';
+        this.renderGL.domElement.style.touchAction = 'none';
+        break;
+      case 'у':
+        this.renderGL.domElement.style.pointerEvents = 'none';
+        this.renderGL.domElement.style.touchAction = 'none';
+        break;
+      case 'й':
+        this.renderGL.domElement.style.pointerEvents = 'auto';
+        this.renderGL.domElement.style.touchAction = 'auto';
+        break;
+    }
+  }
+
+  // Добавляем сцену и делаем дефолтные настройки
+  private initScene(container: HTMLElement) {
+    this.sceneGL.scene.background = null; // Очистка фона у WebGL сцены - Object3D
+    //this.renderGL.localClippingEnabled = true;
+
+    this.renderGL.setClearColor(0x000000, 0); // Очистка фона у WebGL рендера canvas- Object3D
+    this.renderCSS.domElement.style.backgroundColor = 'gray'; // Делаем фон для сцены любого цвета поддерживаемого CSS
+    this.renderCSS.domElement.appendChild(this.renderGL.domElement); // Накладываем 3Д обьекты на HTML для перерисовки
+    container.appendChild(this.renderCSS.domElement); // Добавляем рендер на сайт
+
+    this.sceneGL.addScene([this.shadow, this.drctLight]); // Работа с светом
+  }
+
+  // работа с моделями
   private rerenderModels() {
     // Добавляем шейдеры
     this.modelLaptop.shaderCreate(this.cameraHelper);
     this.modelLaptop.addToScene(this.sceneGL.scene);
 
+    this.sceneGL.scene.remove(this.sceneGL.scene.children[2]); // удаление фантома
+
     // После загрузки модельки делаем что хотим
     this.modelLaptop.customEdit((model) => {
       //console.log(model);
       this.drctLight.lookAt(model.position);
+    });
+
+    this.modelLaptop.setNodeParam((node) => {
+      node.userData = {
+        TMF: true,
+      };
     });
 
     // Рендеринг шейдеров со своей скоростью
