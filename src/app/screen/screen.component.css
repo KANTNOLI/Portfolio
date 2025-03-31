@@ -7,19 +7,61 @@
 }
 
 .site {
-  overflow-x: hidden;
+  overflow: hidden;
   display: flex;
   flex-wrap: wrap;
-
-  position: absolute;
-  height: 100%;
-  width: 50px;
-  background-color: green;
+  position: relative; /* Меняем absolute на relative */
+  background-color: #2E2C2F;
+  width: 100%; /* Указываем явные размеры */
+  height: 100%; /* Указываем явные размеры */
 }
 
-.test {
-  width: 50px;
-  height: 50px;
-  background-color: red;
-  margin: 10px;
+.site::after {
+  content: "";
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Dissolve_Noise_Texture.png");
+  height: 300%;
+  width: 300%;
+  position: absolute; /* Меняем fixed на absolute */
+  opacity: 0.1;
+  animation: animateGrain 8s steps(10) infinite;
+  top: 0;
+  left: 0;
+}
+
+@keyframes animateGrain {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-5%, -10%);
+  }
+  20% {
+    transform: translate(-15%, -20%);
+  }
+  30% {
+    transform: translate(-5%, -10%);
+  }
+  40% {
+    transform: translate(-15%, -20%);
+  }
+
+  50% {
+    transform: translate(-5%, -10%);
+  }
+  60% {
+    transform: translate(-15%, -20%);
+  }
+  70% {
+    transform: translate(-5%, -10%);
+  }
+  80% {
+    transform: translate(-15%, -20%);
+  }
+  90% {
+    transform: translate(-5%, -10%);
+  }
+  100% {
+    transform: translate(-15%, -20%);
+  }
 }

@@ -42,7 +42,7 @@ export class RenderService {
     { x: 0, y: 0, z: 0 },
     {
       height: 1000,
-      width: 1565,
+      width: 1600,
     }
   );
   private cameraHelper = Shaders.CamerasCuttingHelper(
@@ -56,7 +56,7 @@ export class RenderService {
     {
       posX: 0,
       posY: 2,
-      posZ: 21,
+      posZ: 20.98,
       scaleHeight: 1.3,
       scaleLength: 1.3,
       scaleWidth: 1.3,
@@ -65,15 +65,18 @@ export class RenderService {
     {}
   );
 
-  // Доп переменные для отслеживания состояния сцены
-  private toggleModeFlag: boolean = false;
-
   constructor(private ngZone: NgZone) {}
 
   // Сборка проекта
   init(container: HTMLElement, site: HTMLElement): void {
     this.initScene(container);
+    this.initScreen(site);
 
+    this.startAnimation();
+    this.rerenderModels();
+  }
+
+  private initScreen(site: HTMLElement) {
     // Подставляем свой обьект HTML с стилями
     site.style.width = this.css3Object.HTMLElement.element.style.width;
     site.style.height = this.css3Object.HTMLElement.element.style.height;
@@ -96,16 +99,7 @@ export class RenderService {
       click.map((click) => {
         console.log(click.object.userData);
       });
-
-      // this.toggleMode(click, event);
     });
-
-    //   console.log(test);
-    //   console.log(123);
-    // });
-
-    this.startAnimation();
-    this.rerenderModels();
   }
 
   private toggleMode(event: KeyboardEvent) {

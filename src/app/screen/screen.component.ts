@@ -4,6 +4,7 @@ import { RenderService } from '../service/render.service';
   selector: 'app-screen',
   templateUrl: './screen.component.html',
   styleUrls: ['./screen.component.css'],
+  imports: [],
 })
 export class ScreenComponent implements AfterViewInit {
   constructor(private elementRef: ElementRef, private render: RenderService) {}
