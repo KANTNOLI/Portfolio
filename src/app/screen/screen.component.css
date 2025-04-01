@@ -7,11 +7,12 @@
 }
 
 .site {
+  position: relative;
   overflow: hidden;
   display: flex;
   flex-wrap: wrap;
   position: relative; 
-  background-color: #fe5d9f;
+  background-color: #0d2818;
   width: 100%;
   height: 100%; 
 }

@@ -89,17 +89,17 @@ export class RenderService {
       this.toggleMode(event);
     });
 
-    this.renderCSS.domElement.addEventListener('click', (event) => {
-      let click = Action.TrackingClickItems(
-        this.sceneGL.scene,
-        this.camera,
-        event
-      );
+    // this.renderCSS.domElement.addEventListener('click', (event) => {
+    //   let click = Action.TrackingClickItems(
+    //     this.sceneGL.scene,
+    //     this.camera,
+    //     event
+    //   );
 
-      click.map((click) => {
-        console.log(click.object.userData);
-      });
-    });
+    //   click.map((click) => {
+    //     console.log(click.object.userData);
+    //   });
+    // });
   }
 
   private toggleMode(event: KeyboardEvent) {
