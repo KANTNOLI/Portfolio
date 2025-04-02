@@ -17,17 +17,37 @@ export class DesktopComponent {
     private componentFactoryResolver: ComponentFactoryResolver
   ) {}
 
-  openWindow(id: number) {
-    let desktop = document.querySelector('.desktop');
-    let window = document.createElement('div');
-    window.classList.add('window');
-    
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(TestingComponent);
-    const componentRef = this.viewContainerRef.createComponent(componentFactory);
-    
-    window.appendChild(componentRef.location.nativeElement);
-    desktop?.appendChild(window);
+  openWindow() {
+    const desktop = document.querySelector('.desktop');
+
+    const windowHTML = `
+      <div class="window">
+        <div class="winHeader">
+          <p class="winHeaderTitle">Google Paint</p>
+          <img src="/winMinimize.png" alt="winMinimize" class="winHeadeImg" />
+          <img src="/winRestore.png" alt="winRestore" class="winHeadeImg" />
+          <img src="/winClose.png" alt="winClose" class="winHeadeImg2" />
+        </div>
+        <div class="winBody"></div>
+      </div>
+
+    `;
+
+    if (desktop) {
+      desktop.innerHTML = desktop.innerHTML + windowHTML;
+
+      // 3. Находим winBody и вставляем компонент
+      const winBody = desktop.querySelector('.winBody:last-child');
+
+      const componentFactory =
+        this.componentFactoryResolver.resolveComponentFactory(TestingComponent);
+      const componentRef =
+        this.viewContainerRef.createComponent(componentFactory);
+
+      if (winBody) {
+        winBody.appendChild(componentRef.location.nativeElement);
+      }
+    }
+    // 2. Добавляем окно в desktop
   }
-
-
 }

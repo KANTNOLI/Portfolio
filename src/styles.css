@@ -2,6 +2,7 @@
   border: 0;
   padding: 0;
   margin: 0;
+  font-family: "Pixelify Sans", sans-serif;
 }
 
 .window {
@@ -13,6 +14,46 @@
   border: 3px solid #50c878;
   border-radius: 10px;
 
-
   z-index: 5;
+}
+
+.winHeader {
+  position: relative;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+
+  width: 100%;
+  height: 30px;
+  background-color: #1e5c3a;
+
+  border-radius: 7px 7px 0 0;
+  border-bottom: 3px solid #50c878;
+}
+.winHeaderTitle {
+  position: absolute;
+  left: 7px;
+  font-size: 18px;
+}
+
+.winHeadeImg {
+  height: 70%;
+  margin: 7px;
+}
+.winHeadeImg2 {
+  height: 60%;
+  margin: 7px;
+}
+
+.winBody {
+  padding: 7px;
+  width: calc(100% - 14px);
+  height: calc(100% - 47px);
+  border-radius: 0 0 7px 7px;
+}
+
+.colors {
+  background-color: #4ad66d;
+  background-color: #1e5c3a;
+  background-color: #50c878;
 }
