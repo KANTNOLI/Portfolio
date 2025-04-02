@@ -16,7 +16,7 @@ export class ScreenComponent implements AfterViewInit {
     const site = this.elementRef.nativeElement.querySelector('.site');
 
     site.addEventListener('click', (event: MouseEvent) => {
-      console.log(event.target);
+     // console.log(event.target);
     });
 
     this.render.init(screen, site);

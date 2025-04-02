@@ -30,7 +30,12 @@
   animation: animateGrain 8s steps(10) infinite;
   top: 0;
   left: 0;
+
+  z-index: 1000;
+  pointer-events: none;
 }
+
+
 
 @keyframes animateGrain {
   0%,
