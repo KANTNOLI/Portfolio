@@ -12,13 +12,13 @@ import { Snippets } from 'kgengine/objects';
 @Injectable({ providedIn: 'root' })
 export class RenderService {
   // Сцены и рендеры
-  private renderGL = Engine.WebGLEngine();
-  private renderCSS = Engine.CSS3DEngine();
+  public renderGL = Engine.WebGLEngine();
+  public renderCSS = Engine.CSS3DEngine();
   private sceneGL = new OtherScripts.CreateScene();
   private sceneCSS = new OtherScripts.CreateScene();
 
   // Освещение и Камера (С действиями юзера)
-  private camera: THREE.PerspectiveCamera = Cameras.DefaultCameraSettings({
+  public camera: THREE.PerspectiveCamera = Cameras.DefaultCameraSettings({
     x: 0,
     y: 0,
     z: 14,
@@ -88,6 +88,31 @@ export class RenderService {
     window.addEventListener('keyup', (event) => {
       this.toggleMode(event);
     });
+
+    // function onMouseMove(event: MouseEvent) {
+    //   // Получаем положение мыши относительно viewport
+
+    //   const rect = this.renderGL.domElement.getBoundingClientRect();
+    //   const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    //   const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    //   // Создаем вектор в нормализованных координатах устройства
+    //   const mouse = new THREE.Vector3(x, y, 0.5);
+
+    //   // Преобразуем в мировые координаты
+    //   mouse.unproject(camera);
+
+    //   // Направление луча от камеры
+    //   mouse.sub(camera.position).normalize();
+
+    //   // Расстояние от камеры до плоскости (20 единиц в вашем случае)
+    //   const distance = -camera.position.y / mouse.y;
+
+    //   // Координаты на плоскости
+    //   const pos = camera.position.clone().add(mouse.multiplyScalar(distance));
+
+    //   console.log('Координаты на плоскости:', pos.x, pos.z);
+    // }
 
     // this.renderCSS.domElement.addEventListener('click', (event) => {
     //   let click = Action.TrackingClickItems(

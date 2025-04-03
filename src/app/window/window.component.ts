@@ -1,49 +1,62 @@
 import { Component } from '@angular/core';
+import { RenderService } from '../service/render.service';
 
 type Side = {
   elRef: HTMLElement | null;
   roolsX: string | null;
   roolsY: string | null;
-}
+};
 
 @Component({
   selector: 'app-window',
   imports: [],
   templateUrl: './window.component.html',
-  styleUrl: './window.component.css'
+  styleUrl: './window.component.css',
 })
 export class WindowComponent {
-
   private ActiveSize: Side = {
     elRef: null,
     roolsX: null,
-    roolsY: null
-  }
+    roolsY: null,
+  };
+
+  private AnalX: number = 0;
+  private AnalY: number = 0;
+
+  constructor(private renderService: RenderService) {}
 
   ngAfterContentInit() {
-    let screen: HTMLElement | null = document.querySelector(".screen")
-    let window: HTMLElement | null = document.querySelector(".window")
-    let siteT: HTMLElement | null = document.querySelector(".sideT")
+    let desktop: HTMLElement | null = document.querySelector('.desktop');
+    let screen: HTMLElement | null = document.querySelector('.screen');
+    let windowComp: HTMLElement | null = document.querySelector('.window');
+    let siteT: HTMLElement | null = document.querySelector('.sideT');
 
-    if (window && siteT && screen) {
-      siteT.addEventListener("mousedown", (event: MouseEvent) => {
+    const height = 1000;
+    const width = 1600;
+    let test = desktop?.getBoundingClientRect();
+    console.log(window.innerWidth);
+    console.log(window.innerHeight);
+    console.log(test);
+
+    if (windowComp && siteT && screen && desktop) {
+      siteT.addEventListener('mousedown', (event: MouseEvent) => {
+        this.AnalY = event.clientY;
+
         this.ActiveSize = {
           elRef: siteT,
-          roolsX: "",
-          roolsY: ""
+          roolsX: '',
+          roolsY: '',
+        };
+      });
+
+      desktop.addEventListener('mousemove', (event: MouseEvent) => {
+        let degree = (event.clientY - this.AnalY) / 700;
+
+        if (windowComp && this.ActiveSize.elRef) {
+          console.log(event.clientY, this.AnalY, event.clientY - this.AnalY);
+          windowComp.style.top = `${degree}px`;
         }
-      })
-
-      console.log(screen);
-
-      screen.addEventListener("mousemove", (event: MouseEvent) => {
-        if (window && this.ActiveSize.elRef) {
-
-          window.style.top = `${event.clientY}px`
-          console.log(event.movementX, event.movementY);
-        }
-
-      })
+      });
 
       // document.querySelector(".sideT")
       //   ?.addEventListener("mouseup", (event) => {
@@ -51,7 +64,6 @@ export class WindowComponent {
       //     console.log("click");
 
       //   })
-
 
       // siteT?.addEventListener("mousemove", (event: MouseEventInit) => {
 
@@ -62,32 +74,9 @@ export class WindowComponent {
       //   console.log(event.clientX, event.clientY);
       //   // console.log(window.x);
 
-
       //   console.log("click");
 
       // })
-
     }
-
-
-    // document.querySelector(".sideR")
-    //   ?.addEventListener("click", () => {
-    //     console.log("click");
-
-    //   })
-    // document.querySelector(".sideL")
-    //   ?.addEventListener("click", () => {
-    //     console.log("click");
-
-    //   })
-    // document.querySelector(".sideB")
-    //   ?.addEventListener("click", () => {
-    //     console.log("click");
-
-    //   })
-
-    console.log(document.querySelector(".window"));
-
-
   }
 }

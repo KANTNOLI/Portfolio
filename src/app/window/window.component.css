@@ -1,104 +1,104 @@
 .window {
-    position: absolute;
-    width: 800px;
-    height: 500px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 800px;
+  height: 500px;
 
-    background-color: #1e5c3a49;
-    backdrop-filter: blur(5px);
-    border: 3px solid #50c878;
-    border-radius: 10px;
+  background-color: #1e5c3a49;
+  backdrop-filter: blur(5px);
+  border: 3px solid #50c878;
+  border-radius: 10px;
 
-    z-index: 5;
+  z-index: 5;
 
-    resize: both;
+  resize: both;
 }
 
 .winHeader {
-    position: relative;
-    display: flex;
-    justify-content: end;
-    align-items: center;
+  position: relative;
+  display: flex;
+  justify-content: end;
+  align-items: center;
 
-    width: 100%;
-    height: 30px;
-    background-color: #1e5c3a;
+  width: 100%;
+  height: 30px;
+  background-color: #1e5c3a;
 
-    border-radius: 7px 7px 0 0;
-    border-bottom: 3px solid #50c878;
+  border-radius: 7px 7px 0 0;
+  border-bottom: 3px solid #50c878;
 }
 
 .winHeaderTitle {
-    position: absolute;
-    left: 7px;
-    font-size: 18px;
+  position: absolute;
+  left: 7px;
+  font-size: 18px;
 }
 
 .winHeadeImg {
-    height: 70%;
-    margin: 7px;
+  height: 70%;
+  margin: 7px;
 }
 
 .winHeadeImg2 {
-    height: 60%;
-    margin: 7px;
+  height: 60%;
+  margin: 7px;
 }
 
 .winBody {
-    padding: 7px;
-    width: calc(100% - 14px);
-    height: calc(100% - 47px);
-    border-radius: 0 0 7px 7px;
+  padding: 7px;
+  width: calc(100% - 14px);
+  height: calc(100% - 47px);
+  border-radius: 0 0 7px 7px;
 }
 
 .colors {
-    background-color: #4ad66d;
-    background-color: #1e5c3a;
-    background-color: #50c878;
+  background-color: #4ad66d;
+  background-color: #1e5c3a;
+  background-color: #50c878;
 }
 
-
-
 .sideT {
-    display: block;
-    position: absolute;
-    top: -5px;
-    left: -5px;
+  display: block;
+  position: absolute;
+  top: -5px;
+  left: -5px;
 
-    width: calc(100% + 10px);
-    height: 5px;
-    background-color: yellow;
-    resize: both;
+  width: calc(100% + 10px);
+  height: 5px;
+  background-color: yellow;
+  resize: both;
 }
 
 .sideR {
-    display: block;
-    position: absolute;
-    top: -5px;
-    left: -5px;
+  display: block;
+  position: absolute;
+  top: -5px;
+  left: -5px;
 
-    width: 5px;
-    height: calc(100% + 10px);
-    background-color: yellow;
+  width: 5px;
+  height: calc(100% + 10px);
+  background-color: yellow;
 }
 
 .sideL {
-    display: block;
-    position: absolute;
-    top: -5px;
-    right: -5px;
+  display: block;
+  position: absolute;
+  top: -5px;
+  right: -5px;
 
-    width: 5px;
-    height: calc(100% + 10px);
-    background-color: yellow;
+  width: 5px;
+  height: calc(100% + 10px);
+  background-color: yellow;
 }
 
 .sideB {
-    display: block;
-    position: absolute;
-    bottom: -5px;
-    left: -5px;
+  display: block;
+  position: absolute;
+  bottom: -5px;
+  left: -5px;
 
-    width: calc(100% + 10px);
-    height: 5px;
-    background-color: yellow;
+  width: calc(100% + 10px);
+  height: 5px;
+  background-color: yellow;
 }
