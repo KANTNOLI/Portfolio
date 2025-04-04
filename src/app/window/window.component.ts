@@ -33,14 +33,14 @@ export class WindowComponent {
 
     const height = 1000;
     const width = 1600;
-    let test = desktop?.getBoundingClientRect();
-    console.log(window.innerWidth);
-    console.log(window.innerHeight);
-    console.log(test);
+    let desktopSizes = desktop?.getBoundingClientRect();
 
     if (windowComp && siteT && screen && desktop) {
       siteT.addEventListener('mousedown', (event: MouseEvent) => {
         this.AnalY = event.clientY;
+        this.AnalX = event.clientX;
+
+        console.log(event.clientX, event.clientY);
 
         this.ActiveSize = {
           elRef: siteT,
@@ -50,11 +50,19 @@ export class WindowComponent {
       });
 
       desktop.addEventListener('mousemove', (event: MouseEvent) => {
-        let degree = (event.clientY - this.AnalY) / 700;
+        if (windowComp && this.ActiveSize.elRef && desktopSizes) {
+          console.log(this.AnalX - desktopSizes.left);
 
-        if (windowComp && this.ActiveSize.elRef) {
-          console.log(event.clientY, this.AnalY, event.clientY - this.AnalY);
-          windowComp.style.top = `${degree}px`;
+          let HRelativity =
+            (event.clientY - desktopSizes.top) / desktopSizes.height;
+          let WRelativity =
+            (event.clientX - desktopSizes.left) / desktopSizes.width;
+
+          console.log(event.clientY, this.AnalY);
+          windowComp.style.top = `${HRelativity * height}px`;
+          windowComp.style.left = `${
+            WRelativity * width - (this.AnalX - desktopSizes.left) / desktopSizes.width
+          }px`;
         }
       });
 
