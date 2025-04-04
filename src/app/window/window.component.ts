@@ -1,12 +1,6 @@
 import { Component } from '@angular/core';
 import { RenderService } from '../service/render.service';
 
-type Side = {
-  elRef: HTMLElement | null;
-  roolsX: string | null;
-  roolsY: string | null;
-};
-
 @Component({
   selector: 'app-window',
   imports: [],
@@ -14,77 +8,72 @@ type Side = {
   styleUrl: './window.component.css',
 })
 export class WindowComponent {
-  private ActiveSize: Side = {
-    elRef: null,
-    roolsX: null,
-    roolsY: null,
-  };
+  private trackFlag: boolean = false;
 
   private AnalX: number = 0;
   private AnalY: number = 0;
 
+  private screen: HTMLElement | null = null;
+  private desktop: HTMLElement | null = null;
+  private windowComp: HTMLElement | null = null;
+  private winHeader: HTMLElement | null = null;
+  private siteT: HTMLElement | null = null;
+  private siteB: HTMLElement | null = null;
+  private siteL: HTMLElement | null = null;
+  private siteR: HTMLElement | null = null;
+
   constructor(private renderService: RenderService) {}
 
   ngAfterContentInit() {
-    let desktop: HTMLElement | null = document.querySelector('.desktop');
-    let screen: HTMLElement | null = document.querySelector('.screen');
-    let windowComp: HTMLElement | null = document.querySelector('.window');
-    let siteT: HTMLElement | null = document.querySelector('.sideT');
-
-    const height = 1000;
+    // Размеры screen HTML главного обьекта, передаем статикой ибо мне похуй я заебался блять с этими 3д хуями
     const width = 1600;
-    let desktopSizes = desktop?.getBoundingClientRect();
+    const height = 1000;
 
-    if (windowComp && siteT && screen && desktop) {
-      siteT.addEventListener('mousedown', (event: MouseEvent) => {
-        this.AnalY = event.clientY;
-        this.AnalX = event.clientX;
+    // Получение HTML компонентов для работы winHeader
+    this.screen = document.querySelector('.screen'); // Главный экран весь
+    this.desktop = document.querySelector('.desktop'); // Рабочий стол конкретно
+    this.windowComp = document.querySelector('.window'); // Окно
+    this.winHeader = document.querySelector('.winHeader'); // Шторка Окна
+    this.siteT = document.querySelector('.sideT'); // сторона Окна
+    this.siteB = document.querySelector('.sideB'); // сторона Окна
+    this.siteL = document.querySelector('.sideL'); // сторона Окна
+    this.siteR = document.querySelector('.sideR'); // сторона Окна
 
-        console.log(event.clientX, event.clientY);
+    // Получение ширину окна относительно сцены без погрешностей (Т.к. 1600 -> rand)
+    let desktopSizes = this.desktop?.getBoundingClientRect();
 
-        this.ActiveSize = {
-          elRef: siteT,
-          roolsX: '',
-          roolsY: '',
-        };
-      });
+    this.siteT?.addEventListener('mousedown', (event: MouseEvent) => {
+      this.AnalY = event.clientY;
+      this.AnalX = event.clientX;
 
-      desktop.addEventListener('mousemove', (event: MouseEvent) => {
-        if (windowComp && this.ActiveSize.elRef && desktopSizes) {
-          console.log(this.AnalX - desktopSizes.left);
+      console.log(event.clientX, event.clientY);
+
+      this.trackFlag = true;
+    });
+
+    console.log(this.siteT);
+
+    if (this.trackFlag && this.desktop) {
+      this.desktop.addEventListener('mousemove', (event: MouseEvent) => {
+        if (this.windowComp && desktopSizes) {
+          let WRelativityOpposite =
+            (this.AnalX - desktopSizes.left) / desktopSizes.width;
+          let HRelativityOpposite =
+            (this.AnalY - desktopSizes.top) / desktopSizes.height;
 
           let HRelativity =
             (event.clientY - desktopSizes.top) / desktopSizes.height;
           let WRelativity =
             (event.clientX - desktopSizes.left) / desktopSizes.width;
 
-          console.log(event.clientY, this.AnalY);
-          windowComp.style.top = `${HRelativity * height}px`;
-          windowComp.style.left = `${
-            WRelativity * width - (this.AnalX - desktopSizes.left) / desktopSizes.width
+          this.windowComp.style.top = `${
+            HRelativity * height - HRelativityOpposite * height
+          }px`;
+          this.windowComp.style.left = `${
+            WRelativity * width - WRelativityOpposite * width
           }px`;
         }
       });
-
-      // document.querySelector(".sideT")
-      //   ?.addEventListener("mouseup", (event) => {
-
-      //     console.log("click");
-
-      //   })
-
-      // siteT?.addEventListener("mousemove", (event: MouseEventInit) => {
-
-      //   if (window && event.clientY && event.movementY) {
-      //     window.style.top = `${event.clientY + event.movementY - 30}px`;
-      //   }
-
-      //   console.log(event.clientX, event.clientY);
-      //   // console.log(window.x);
-
-      //   console.log("click");
-
-      // })
     }
   }
 }
