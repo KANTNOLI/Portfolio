@@ -67,29 +67,41 @@ export class WindowComponent {
         windowSizes
       ) {
         let WRelativityOpposite =
-          ((this.AnalX - desktopSizes.left) / desktopSizes.width) * this.width;
+          this.normalize(this.AnalX, desktopSizes.left, desktopSizes.width) *
+          this.width;
         let HRelativityOpposite =
-          ((this.AnalY - desktopSizes.top) / desktopSizes.height) * this.height;
-
-        let HRelativity =
-          ((event.clientY - desktopSizes.top) / desktopSizes.height) *
+          this.normalize(this.AnalY, desktopSizes.top, desktopSizes.height) *
           this.height;
+
         let WRelativity =
-          ((event.clientX - desktopSizes.left) / desktopSizes.width) *
+          this.normalize(event.clientX, desktopSizes.left, desktopSizes.width) *
           this.width;
-
-        let HWinRelativity =
-          ((windowSizes.top - desktopSizes.top) / windowSizes.height) *
+        let HRelativity =
+          this.normalize(event.clientY, desktopSizes.top, desktopSizes.height) *
           this.height;
+
         let WWinRelativity =
-          ((windowSizes.left - desktopSizes.left) / windowSizes.width) *
-          this.width;
+          this.normalize(
+            windowSizes.left,
+            desktopSizes.left,
+            windowSizes.width
+          ) *
+          this.width *
+          0.5;
+        let HWinRelativity =
+          this.normalize(
+            windowSizes.top,
+            desktopSizes.top,
+            windowSizes.height
+          ) *
+          this.height *
+          0.5;
 
         this.windowComp.style.left = `${
-          WRelativity - WRelativityOpposite + WWinRelativity * 0.5
+          WRelativity - WRelativityOpposite + WWinRelativity
         }px`;
         this.windowComp.style.top = `${
-          HRelativity - HRelativityOpposite + HWinRelativity * 0.5
+          HRelativity - HRelativityOpposite + HWinRelativity
         }px`;
       }
     };
@@ -97,6 +109,10 @@ export class WindowComponent {
     if (this.funcLink) {
       this.desktop?.addEventListener('mousemove', this.funcLink);
     }
+  }
+
+  normalize(value: number, offset: number, size: number): number {
+    return (value - offset) / size;
   }
 
   dragWindowToggleActive() {
@@ -110,7 +126,7 @@ export class WindowComponent {
         console.log('mousedown');
       });
 
-      this.screen?.addEventListener('mouseup', (event: MouseEvent) => {
+      this.winHeader.addEventListener('mouseup', (event: MouseEvent) => {
         this.AnalY = event.clientY;
         this.AnalX = event.clientX;
         this.trackType = 0;
