@@ -29,11 +29,9 @@
   border-bottom: 3px solid #50c878;
 }
 
-
-.winHeader:active{
-  cursor:move;
+.winHeader:active {
+  cursor: move;
 }
-
 
 .winHeaderTitle {
   position: absolute;
@@ -77,21 +75,22 @@
 }
 
 .sideR {
+  cursor: w-resize;
   display: block;
   position: absolute;
   top: -5px;
-  left: -5px;
+  right: -5px;
 
   width: 5px;
   height: calc(100% + 10px);
-  background-color: yellow;
+  background-color: rgba(245, 245, 0, 0);
 }
 
 .sideL {
   display: block;
   position: absolute;
   top: -5px;
-  right: -5px;
+  left: -5px;
 
   width: 5px;
   height: calc(100% + 10px);

@@ -11,11 +11,11 @@ export class WindowComponent {
   // Тип треккер
   private trackType: number = 0;
   private funcLink!: (event: MouseEvent) => any;
-  // 0 off
-  // 1 drag
+  // 0 off  +
+  // 1 drag +
   // 2 resizeT
-  // 3 resizeB
-  // 4 resizeR
+  // 3 resizeB +
+  // 4 resizeR +
   // 5 resizeL
 
   // Положение мышки при клике
@@ -38,6 +38,11 @@ export class WindowComponent {
 
   constructor(private renderService: RenderService) {}
 
+  normalize(value: number, offset: number, size: number): number {
+    // координата изменения - коор относительно чего - разрешение
+    return (value - offset) / size;
+  }
+
   ngAfterContentInit() {
     // Получение HTML компонентов для работы winHeader
     this.screen = document.querySelector('.screen'); // Главный экран весь
@@ -49,15 +54,13 @@ export class WindowComponent {
     this.siteL = document.querySelector('.sideL'); // сторона Окна
     this.siteR = document.querySelector('.sideR'); // сторона Окна
 
-    this.dragWindowToggleActive();
-
-    console.log(this.siteT);
+    this.dragWinToggle();
+    this.resizeWinToggle();
   }
 
-  dragWindowMove() {
+  dragWinMove() {
     let desktopSizes = this.desktop?.getBoundingClientRect();
     let windowSizes = this.windowComp?.getBoundingClientRect();
-    console.log(windowSizes);
 
     this.funcLink = (event: MouseEvent) => {
       if (
@@ -66,6 +69,7 @@ export class WindowComponent {
         desktopSizes &&
         windowSizes
       ) {
+        // Против... для распл окна
         let WRelativityOpposite =
           this.normalize(this.AnalX, desktopSizes.left, desktopSizes.width) *
           this.width;
@@ -73,13 +77,18 @@ export class WindowComponent {
           this.normalize(this.AnalY, desktopSizes.top, desktopSizes.height) *
           this.height;
 
+        // Расположение относительно сцены
         let WRelativity =
-          this.normalize(event.clientX, desktopSizes.left, desktopSizes.width) *
-          this.width;
+          this.normalize(
+            event.clientX + 2,
+            desktopSizes.left,
+            desktopSizes.width
+          ) * this.width;
         let HRelativity =
           this.normalize(event.clientY, desktopSizes.top, desktopSizes.height) *
           this.height;
 
+        // Расположение указателя относительно шапки
         let WWinRelativity =
           this.normalize(
             windowSizes.left,
@@ -106,31 +115,67 @@ export class WindowComponent {
       }
     };
 
-    if (this.funcLink) {
-      this.desktop?.addEventListener('mousemove', this.funcLink);
-    }
+    this.desktop?.addEventListener('mousemove', this.funcLink);
   }
 
-  normalize(value: number, offset: number, size: number): number {
-    return (value - offset) / size;
-  }
-
-  dragWindowToggleActive() {
+  dragWinToggle() {
     if (this.winHeader) {
       this.winHeader.addEventListener('mousedown', (event: MouseEvent) => {
         this.AnalY = event.clientY;
         this.AnalX = event.clientX;
 
         this.trackType = 1;
-        this.dragWindowMove();
-        console.log('mousedown');
+        this.dragWinMove();
       });
 
       this.winHeader.addEventListener('mouseup', (event: MouseEvent) => {
         this.AnalY = event.clientY;
         this.AnalX = event.clientX;
         this.trackType = 0;
-        console.log('mouseup');
+        this.desktop?.removeEventListener('mousemove', this.funcLink);
+      });
+    }
+  }
+
+  resizeWinMove() {
+    let desktopSizes = this.desktop?.getBoundingClientRect();
+    let windowSizes = this.windowComp?.getBoundingClientRect();
+
+    this.funcLink = (event: MouseEvent) => {
+      if (this.windowComp && desktopSizes && windowSizes) {
+        this.AnalX = event.clientX;
+
+        this.windowComp.style.width = `${
+          this.normalize(
+            event.clientX + 2,
+            windowSizes.left,
+            desktopSizes.width
+          ) *
+            this.width -
+          5
+        }px`;
+      }
+    };
+
+    this.desktop?.addEventListener('mousemove', this.funcLink);
+  }
+
+  resizeWinToggle() {
+    if (this.siteR && this.windowComp) {
+      this.siteR.addEventListener('mousedown', (event: MouseEvent) => {
+        this.AnalY = event.clientY;
+        this.AnalX = event.clientX;
+        this.trackType = 4;
+        console.log('mousedown siteR');
+
+        this.resizeWinMove();
+      });
+
+      this.windowComp.addEventListener('mouseup', (event: MouseEvent) => {
+        this.AnalY = event.clientY;
+        this.AnalX = event.clientX;
+        this.trackType = 0;
+        console.log('mouseup siteR');
         this.desktop?.removeEventListener('mousemove', this.funcLink);
       });
     }
