@@ -55,63 +55,44 @@ export class WindowComponent {
     this.siteR = document.querySelector('.sideR'); // сторона Окна
 
     this.dragWinToggle();
-    this.resizeWinToggle();
+    this.resizeWWinToggle();
+    this.resizeHWinToggle();
+    this.clearMoving();
   }
 
   dragWinMove() {
     let desktopSizes = this.desktop?.getBoundingClientRect();
     let windowSizes = this.windowComp?.getBoundingClientRect();
+    let winHeader = this.winHeader?.getBoundingClientRect();
 
     this.funcLink = (event: MouseEvent) => {
       if (
         this.trackType === 1 &&
         this.windowComp &&
         desktopSizes &&
-        windowSizes
+        windowSizes &&
+        winHeader
       ) {
         // Против... для распл окна
         let WRelativityOpposite =
-          this.normalize(this.AnalX, desktopSizes.left, desktopSizes.width) *
-          this.width;
+          this.normalize(this.AnalX, windowSizes.left, windowSizes.width) *
+          this.width *
+          0.5;
         let HRelativityOpposite =
-          this.normalize(this.AnalY, desktopSizes.top, desktopSizes.height) *
-          this.height;
+          this.normalize(this.AnalY, windowSizes.top, windowSizes.height) *
+          this.height *
+          0.5;
 
         // Расположение относительно сцены
         let WRelativity =
-          this.normalize(
-            event.clientX + 2,
-            desktopSizes.left,
-            desktopSizes.width
-          ) * this.width;
+          this.normalize(event.clientX, desktopSizes.left, desktopSizes.width) *
+          this.width;
         let HRelativity =
           this.normalize(event.clientY, desktopSizes.top, desktopSizes.height) *
           this.height;
 
-        // Расположение указателя относительно шапки
-        let WWinRelativity =
-          this.normalize(
-            windowSizes.left,
-            desktopSizes.left,
-            windowSizes.width
-          ) *
-          this.width *
-          0.5;
-        let HWinRelativity =
-          this.normalize(
-            windowSizes.top,
-            desktopSizes.top,
-            windowSizes.height
-          ) *
-          this.height *
-          0.5;
-
-        this.windowComp.style.left = `${
-          WRelativity - WRelativityOpposite + WWinRelativity
-        }px`;
-        this.windowComp.style.top = `${
-          HRelativity - HRelativityOpposite + HWinRelativity
-        }px`;
+        this.windowComp.style.left = `${WRelativity - WRelativityOpposite}px`;
+        this.windowComp.style.top = `${HRelativity - HRelativityOpposite}px`;
       }
     };
 
@@ -127,55 +108,83 @@ export class WindowComponent {
         this.trackType = 1;
         this.dragWinMove();
       });
-
-      this.winHeader.addEventListener('mouseup', (event: MouseEvent) => {
-        this.AnalY = event.clientY;
-        this.AnalX = event.clientX;
-        this.trackType = 0;
-        this.desktop?.removeEventListener('mousemove', this.funcLink);
-      });
     }
   }
 
-  resizeWinMove() {
+  resizeWWinMove() {
     let desktopSizes = this.desktop?.getBoundingClientRect();
     let windowSizes = this.windowComp?.getBoundingClientRect();
 
     this.funcLink = (event: MouseEvent) => {
       if (this.windowComp && desktopSizes && windowSizes) {
-        this.AnalX = event.clientX;
-
-        this.windowComp.style.width = `${
+        let resize =
           this.normalize(
-            event.clientX + 2,
+            event.clientX + 2, // погрешность
             windowSizes.left,
             desktopSizes.width
           ) *
             this.width -
-          5
-        }px`;
+          5;
+
+        // 1% от разрешения 1600 640 = 40
+        if (resize >= 480) {
+          this.windowComp.style.width = `${resize}px`;
+        }
       }
     };
 
     this.desktop?.addEventListener('mousemove', this.funcLink);
   }
 
-  resizeWinToggle() {
-    if (this.siteR && this.windowComp) {
+  resizeWWinToggle() {
+    if (this.siteR && this.siteL && this.windowComp) {
       this.siteR.addEventListener('mousedown', (event: MouseEvent) => {
-        this.AnalY = event.clientY;
-        this.AnalX = event.clientX;
         this.trackType = 4;
-        console.log('mousedown siteR');
-
-        this.resizeWinMove();
+        this.resizeWWinMove();
       });
 
-      this.windowComp.addEventListener('mouseup', (event: MouseEvent) => {
-        this.AnalY = event.clientY;
-        this.AnalX = event.clientX;
+      this.siteL.addEventListener('mousedown', (event: MouseEvent) => {
+        this.trackType = 4;
+        this.resizeWWinMove();
+      });
+    }
+  }
+
+  resizeHWinMove() {
+    let desktopSizes = this.desktop?.getBoundingClientRect();
+    let windowSizes = this.windowComp?.getBoundingClientRect();
+
+    this.funcLink = (event: MouseEvent) => {
+      if (this.windowComp && desktopSizes && windowSizes) {
+        let resize =
+          this.normalize(event.clientY, windowSizes.top, desktopSizes.height) *
+            this.height -
+          5;
+
+        // 1% от разрешения 1000
+        if (resize >= 300) {
+          this.windowComp.style.height = `${resize}px`;
+        }
+      }
+    };
+
+    this.desktop?.addEventListener('mousemove', this.funcLink);
+  }
+
+  resizeHWinToggle() {
+    if (this.siteB && this.windowComp) {
+      this.siteB.addEventListener('mousedown', (event: MouseEvent) => {
+        this.trackType = 4;
+        this.resizeHWinMove();
+      });
+    }
+  }
+
+  clearMoving() {
+    if (this.screen) {
+      this.screen.addEventListener('mouseup', (event: MouseEvent) => {
         this.trackType = 0;
-        console.log('mouseup siteR');
+
         this.desktop?.removeEventListener('mousemove', this.funcLink);
       });
     }

@@ -1,7 +1,7 @@
 .window {
   position: absolute;
-  top: 0px;
-  left: 0;
+  top: 50px;
+  left: 50px;
   width: 800px;
   height: 500px;
 
@@ -87,6 +87,7 @@
 }
 
 .sideL {
+  cursor: w-resize;
   display: block;
   position: absolute;
   top: -5px;
@@ -98,6 +99,7 @@
 }
 
 .sideB {
+  cursor: n-resize;
   display: block;
   position: absolute;
   bottom: -5px;
